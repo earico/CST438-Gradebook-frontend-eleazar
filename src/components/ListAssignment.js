@@ -34,8 +34,8 @@ function ListAssignment(props) {
           <h4>{message}&nbsp;</h4>
               <table className="Center"> 
                 <thead>
-                  <tr>
-                    {headers.map((title, idx) => (<th key={idx}>{title}</th>))}
+                  <tr>                                                
+                    {headers.map((title, idx) => (<th key={idx}>{title}{idx}</th>))}
                   </tr>
                 </thead>
                 <tbody>
@@ -53,6 +53,7 @@ function ListAssignment(props) {
                   ))}
                 </tbody>
               </table>
+              <button id="createAs" type="button" margin="auto">Add Assignment</button>
           </div>
       </div>
     )
