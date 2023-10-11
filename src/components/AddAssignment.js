@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Button from '@mui/material/Button';
 import {SERVER_URL} from '../constants';
 
 // Front end code to create a new assignment by entering
@@ -6,32 +7,40 @@ import {SERVER_URL} from '../constants';
 // Check the format of the due date for the form yyyy-mm-dd.
 
 function AddAssignment(props) { 
-  const [assignments, setAssignments] = useState([]);
+  const [assignment, setAssignment] = useState({ assignmentName: '', dueDate: '', courseId: '' });
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    // called once after intial render
-    fetchAssignments();
-   }, [] )
-  
-   const fetchAssignments = () => {
-     console.log("fetchAssignments");
-     fetch(`${SERVER_URL}/assignment`)
-     .then((response) => response.json() ) 
-     .then((data) => { 
-       console.log("assignment length "+data.length);
-       setAssignments(data);
-      }) 
-     .catch(err => console.error(err)); 
-   }
+  const handleChange = (event) => {
+    setAssignment({...assignment, [event.target.name]:event.target.value });
+  }
+
+  const addAssignment = ( ) => {
+    fetch(`${SERVER_URL}/assignment`, 
+      {  
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json', }, 
+        body: JSON.stringify(assignment)
+      } 
+    )
+    .then((response) => { 
+      if (response.ok) {
+          setMessage('Assignment added.');
+      } else {
+          setMessage("Add failed.");
+      }
+   } )
+  .catch((err) =>  { setMessage('Error. '+err) } );
+  }
 
   return (
       <div id="dialog">
+        <h3>{message}</h3>
         <form>
-          <label>Assignment Name<input type="text"/></label>
-          <label>Course Title<input type="text"/></label>
-          <label>Due Date<input type="text"/></label>
+          <label>Assignment Name<input type="text" name='assignmentName' onChange={handleChange}/></label>
+          <label>Course Title<input type="text" name='courseId' onChange={handleChange}/></label>
+          <label>Due Date<input type="text" name='dueDate' onChange={handleChange}/></label>
         </form>
+        <Button onClick={addAssignment}>Add</Button>
       </div>
   ); 
 }
